@@ -2,7 +2,7 @@
 name = "fffio"
 dynamic = ["version"]
 authors = [
-    { name = "yamakox", email = "yamakox@gmail.com" }
+    { name = "yamakox" }
 ]
 description = "Python package of FFmpeg Frame Input/Output"
 readme = "README.md"
