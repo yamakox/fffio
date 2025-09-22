@@ -33,6 +33,13 @@ with FrameReader('sample.mp4') as reader:
         )
 ```
 
+Note: If the video file is generated using FrameWriter, ensure that the `colorspace` value in FrameReader matches the value in FrameWriter.
+
+|class|`colorspace` parameter|
+|---|---|
+|FrameReader|The default value is `False`.|
+|FrameWriter|The default value is `True`.|
+
 ## How to write frames to a video
 
 Simply iterate through calls to `FrameWriter`'s `write` or `write_frame` method.
@@ -50,13 +57,14 @@ with FrameWriter('sample.mp4', size=size) as writer:
         writer.write(frame)
 ```
 
-`FrameWriter` performs color correction during conversion from RGB to YUV. For more information, please see [Colorspace support in FFmpeg](https://trac.ffmpeg.org/wiki/colorspace#colorspace_yuv420p).
+Note: When `colorspace` parameter is `True` (default), `FrameWriter` converts colorspace (bt601-6-625 -> bt709) during conversion from RGB to YUV. For more information, please see [Colorspace support in FFmpeg](https://trac.ffmpeg.org/wiki/colorspace#colorspace_yuv420p).
 
 ## Examples
 
 The script examples in the `examples` folder can be run using [uv](https://docs.astral.sh/uv/).
 
 ```bash
+uv sync
 cd examples
 uv run frame_writer_sample.py
 uv run frame_reader_sample.py

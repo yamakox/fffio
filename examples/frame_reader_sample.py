@@ -4,11 +4,11 @@ from fffio import FrameReader
 from PIL import Image
 
 def main():
-    with FrameReader('sample.mp4') as reader:
+    with FrameReader('sample.mp4', colorspace=True) as reader:
         count = 0
         for i, frame in enumerate(reader.frames(), 1):
             img = Image.fromarray(frame)
-            img.save(f'sample{i:03}.jpg')
+            img.save(f'sample{i:03}.png')
             count += 1
         print(f'{count} frames are saved.')
 

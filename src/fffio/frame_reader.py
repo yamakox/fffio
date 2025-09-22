@@ -60,6 +60,7 @@ class FrameReader:
         n_frames (int): number of frames
         filter_complex (dict[str, Union[dict, list, tuple]]): definition of a complex filtergraph
         pix_fmt (str): output pixel format: only "rgb24" (default) or "rgb48" supported
+        colorspace (bool): if true, writer converts colorspace (bt709 -> bt601-6-625)
 
     Attributes:
         video_file_name (str): input video file name
@@ -78,7 +79,9 @@ class FrameReader:
                  to: float = None, 
                  n_frames: int = None, 
                  filter_complex: dict[str, Union[dict, list, tuple]] = None, 
-                 pix_fmt: str = 'rgb24'):
+                 pix_fmt: str = 'rgb24', 
+                 colorspace: bool = False, 
+        ):
         if pix_fmt not in ['rgb24', 'rgb48']:
             raise  ValueError('pix_fmt must be "rgb24" or "rgb48"')
         self.pix_fmt = pix_fmt
@@ -104,11 +107,23 @@ class FrameReader:
                     process = process.filter_(k, *v)
                 else:
                     process = process.filter_(k, v)
-        args = (
-            process
-            .output('pipe:', format='rawvideo', pix_fmt=pix_fmt)
-            .compile()
-        )
+        if colorspace:
+            args = (
+                process
+                .filter_('colorspace', 'bt601-6-625', iall='bt709', fast='1')
+                .output('pipe:', 
+                        sws_flags='spline+accurate_rnd+full_chroma_int', 
+                        color_range=2, colorspace=0, 
+                        format='rawvideo', pix_fmt=pix_fmt)
+                .compile()
+            )
+        else:
+            args = (
+                process
+                .output('pipe:', 
+                        format='rawvideo', pix_fmt=pix_fmt)
+                .compile()
+            )
         self.process = subprocess.Popen(
             args,
             stdout=subprocess.PIPE,
